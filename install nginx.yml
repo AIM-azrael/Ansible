@@ -1,0 +1,14 @@
+
+---
+# install nginx
+- hosts: websrvs
+  remote_user: root
+  tasks:
+    - name: add group nginx
+      user: name=nginx state=present
+    - name: add user nginx
+      user: name=nginx state=present group=nginx
+    - name: Install Nginx
+      yum: name=nginx state=present
+    - name: Start Nginx
+      service: name=nginx state=started enabled=yes
