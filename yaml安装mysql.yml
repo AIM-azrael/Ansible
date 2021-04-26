@@ -1,0 +1,65 @@
+#范例:安装mysql-5.6.46-linux -glibc2.12
+[root@ansible ~]#1s -1 /data/ansib1e/files/mysq1-5. 6. 46-1inux-g1ibc2.12-x86_ 64. tar. gz
+-rw-r--r-- 1 root root 403177622 Dec
+413:05 /data/ansible/files/mysq1-5.6. 46-1inux-
+glibc2.12-x86_ _64. tar. gz
+[root@ansible ~]#cat /data/ansible/files/my.cnf
+[mysq1d]
+socket=/tmp/mysq7.sock
+user=mysq1
+symbolid-1inks=0
+datadir=/data/mysq1
+innodb_file_per_table=1
+1og-bin
+pid-file=/data/mysq1/mysq1d.pid
+[client]
+port=3306
+socket=/tmp/mysq1.sock
+[mysq1d_safe]
+log-error=/var/1og/mysq1d.1og
+[root@ansible ~]#cat /data/ansib1e/files/secure_mysq1.sh
+#! /bin/bash
+/usr/1ocal/mysq1/bin/mysq1_secure_installation <<EOF
+y
+magedu
+magedu
+y
+y
+y
+y
+EOF
+[root@ansible ~]#cat /data/ansib1e/insta11_mysq1.yml
+ ---
+# insta11 mysq1-5. 6.46-1inux-g1ibc2.12-x86_ _64. tar.gz
+- hosts: websrvs
+  remote_ user: root
+  tasks:
+    - name: insta11 packages
+      yum: name=1ibaio,per1-Data-Dumper,per1-Getopt-Long
+    - name: create mysq1 group
+      group: name=mysq1 gid=306
+    - name: create mysq1 user
+      yum: name=libaio, per1 -Data-Dumper , per1-Getopt-Long
+    - name: create mysq1 group
+      group: name=mysq1 gid=306
+    - name: create mysq1 user
+      user: name=mysq1 uid=306 group=mysq1 she11=/sbin/no1ogin system=yes create_home=no home=/ data/mysq1
+    - name: copy tar to remote host and file mode
+      unarchive: src=/ data/ansib1e/files/mysq1-5.6.46-1inux-g1ibc2.12-x86_64.tar.gz dest=/usr/1oca1/ owner=root group=root
+    - name: create linkfile /usr/1oca1/mysq1
+      file: src=/usr/1oca1/mysq1-5. 6. 46-1inux-g1ibc2.12-x86_64 dest=/usr/1oca1/mysq1 state=1ink
+    - name: data dir
+      she11: chdi r=/usr/1oca1/mysq1/ ./scripts/mysq1_insta11_db --datadir=/data/mysq1 --user=mysq1
+      tags: data
+    - name: config my.cnf
+      copy: src=/data/ansible/files/my.cnf dest=/etc/my.cnf
+    - name: service script
+      she11: /bin/cp /usr/1oca1/mysq1/support-files/mysq1.server /etc/init.d/mysq1d
+    - name: enable service
+      she11: /etc/init.d/mysq1d start;chkconfig --add mysq1d;chkconfig mysq1d on
+      tags: service
+    - name: PATH variab1e
+      copy: content= 'PATH=/usr/1oca1/mysq1/bin:$PATH' dest=/etc/profile.d/mysq1.sh
+    - name: secure script
+      script: /data/ansib1e/files/secure_mysq1.sh
+      tags: script
